@@ -2,7 +2,7 @@
 URL configuration for djangocoursework project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.1/topics/http/urls/
+    https://docs.djangoproject.com/en/dev/topics/http/urls/
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -15,8 +15,20 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
+from forum.views import profileApiView
+from forum.views import categoryApiView
+from forum.views import questionApiView
+from forum.views import answerApiView
+from forum.views import commentApiView
+
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("", include("forum.urls")),
+    path('api/v1/profilelist/', profileApiView.as_view()),
+    path('api/v1/categorylist/', categoryApiView.as_view()),
+    path('api/v1/questionlist/', questionApiView.as_view()),
+    path('api/v1/answerlist/', answerApiView.as_view()),
+    path('api/v1/commentlist/', commentApiView.as_view()),
+    path("admin/", admin.site.urls),
 ]
