@@ -10,6 +10,7 @@ from forum.views import commentViewSet
 from . import views
 
 
+
 router = DefaultRouter()
 router.register(r'profiles', profileViewSet, basename='profileAccount')
 router.register(r'categories', categoryViewSet, basename='category')
@@ -20,4 +21,5 @@ router.register(r'comments', commentViewSet, basename='commentAnswer')
 urlpatterns = [
     path('', include(router.urls)),
     path("", views.index, name="index"),
+
 ]

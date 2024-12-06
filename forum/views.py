@@ -13,6 +13,8 @@ from .serializers import answerSerializer
 from .serializers import commentSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
+
 from django.db.models import Q
 
 class profileViewSet(viewsets.ModelViewSet):
@@ -21,7 +23,6 @@ class profileViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=False)
     def profile_filter(self,request):
-        print(0)
         filterAccount = (
             ~Q(email__contains='mail') &
             (Q(user_name__contains='Иванов') | Q(user_name__contains='Валерия'))
@@ -30,8 +31,10 @@ class profileViewSet(viewsets.ModelViewSet):
         filtredProfiles = profileAccount.objects.filter(filterAccount)
         serializer = profileSerializer(filtredProfiles, many=True)
         return Response(serializer.data)
+    
+    
 
-class questionViewSet(viewsets.ModelViewSet):
+class questionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = question.objects.all()
     serializer_class = questionSerializer
 
@@ -46,15 +49,21 @@ class questionViewSet(viewsets.ModelViewSet):
         serializer = questionSerializer(filtredQuestions, many=True)
         return Response(serializer.data)
 
-class categoryViewSet(viewsets.ModelViewSet):
+class categoryViewSetPagination(PageNumberPagination):
+    page_size = 3
+    page_size_query_param = 'page_size'
+    max_page_size = 5
+
+class categoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = category.objects.all()
     serializer_class = categorySerializer
+    pagination_class = categoryViewSetPagination
 
-class answerViewSet(viewsets.ModelViewSet):
+class answerViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = answer.objects.all()
     serializer_class = answerSerializer
 
-class commentViewSet(viewsets.ModelViewSet):
+class commentViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = commentAnswer.objects.all()
     serializer_class = commentSerializer
 
