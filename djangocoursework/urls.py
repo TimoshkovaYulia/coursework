@@ -16,19 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from forum.views import profileApiView
-from forum.views import categoryApiView
-from forum.views import questionApiView
-from forum.views import answerApiView
-from forum.views import commentApiView
 
 
 urlpatterns = [
-    path("", include("forum.urls")),
-    path('api/v1/profilelist/', profileApiView.as_view()),
-    path('api/v1/categorylist/', categoryApiView.as_view()),
-    path('api/v1/questionlist/', questionApiView.as_view()),
-    path('api/v1/answerlist/', answerApiView.as_view()),
-    path('api/v1/commentlist/', commentApiView.as_view()),
+    path("api/", include("forum.urls")),
     path("admin/", admin.site.urls),
 ]

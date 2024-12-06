@@ -10,7 +10,7 @@ from .models import commentAnswer
 class profileSerializer(serializers.ModelSerializer):
     class Meta:
         model = profileAccount
-        fields = ('user_name','email')
+        fields = ('user_name','email', 'login', 'password')
 
 class categorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,14 +20,14 @@ class categorySerializer(serializers.ModelSerializer):
 class questionSerializer(serializers.ModelSerializer):
     class Meta:
         model = question
-        fields = ('question_title','id_category')
+        fields = ('question_title','id_category', 'id_user', 'question_body')
 
 class answerSerializer(serializers.ModelSerializer):
     class Meta:
         model = answer
-        fields = ('answer_body','id_user_answer')
+        fields = ('answer_body','id_user_answer', 'id_question', 'answer_liked_by')
 
 class commentSerializer(serializers.ModelSerializer):
     class Meta:
         model = commentAnswer
-        fields = ('comment_body','id_user')
+        fields = ('comment_body','id_user', 'id_answer', 'comment_liked_by')
