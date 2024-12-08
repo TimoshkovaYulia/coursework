@@ -31,7 +31,6 @@ class answer(models.Model):
     answer_body = models.CharField(max_length=1000)
     answer_date = models.DateField(auto_now_add=True)
     answer_time = models.TimeField(auto_now_add=True)
-    answer_liked_by = models.ManyToManyField(profileAccount, related_name = 'liked_answers')
     def __str__(self):
         return self.answer_body
 
@@ -41,6 +40,13 @@ class commentAnswer(models.Model):
     comment_body = models.CharField(max_length=1000)
     comment_date = models.DateField(auto_now_add=True)
     comment_time = models.TimeField(auto_now_add=True)
-    comment_liked_by = models.ManyToManyField(profileAccount, related_name = 'liked_comments')
     def __str__(self):
         return self.comment_body
+    
+class likesAnswer(models.Model):
+    id_user = models.ForeignKey(profileAccount, on_delete=models.CASCADE)
+    id_answer = models.ForeignKey(answer, on_delete=models.CASCADE)
+
+class likesComment(models.Model):
+    id_user = models.ForeignKey(profileAccount, on_delete=models.CASCADE)
+    id_comment = models.ForeignKey(commentAnswer, on_delete=models.CASCADE)

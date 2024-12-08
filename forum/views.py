@@ -13,6 +13,7 @@ from .serializers import answerSerializer
 from .serializers import commentSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.pagination import PageNumberPagination
 
 from django.db.models import Q
@@ -48,6 +49,17 @@ class questionViewSet(viewsets.ReadOnlyModelViewSet):
         filtredQuestions = question.objects.filter(filterQuestion)
         serializer = questionSerializer(filtredQuestions, many=True)
         return Response(serializer.data)
+    
+    filter_backends = [DjangoFilterBackend]
+    filter_fields = ['question_body']
+
+class questionDelete(generics.RetrieveDestroyAPIView):
+    queryset = question.objects.all()
+    serializer_class = questionSerializer
+
+class questionCreate(generics.ListCreateAPIView):
+    queryset = question.objects.all()
+    serializer_class = questionSerializer
 
 class categoryViewSetPagination(PageNumberPagination):
     page_size = 3
@@ -58,6 +70,10 @@ class categoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = category.objects.all()
     serializer_class = categorySerializer
     pagination_class = categoryViewSetPagination
+
+class answerApiUpdate(generics.UpdateAPIView):
+    queryset = answer.objects.all()
+    serializer_class = answerSerializer
 
 class answerViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = answer.objects.all()
