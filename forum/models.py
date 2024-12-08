@@ -8,6 +8,10 @@ class profileAccount(models.Model):
     email = models.EmailField(max_length= 320)
     def __str__(self):
         return self.user_name
+    
+    class Meta:
+        verbose_name = "Профиль"
+        verbose_name_plural = "Пользователи"
         
     
 class category(models.Model):
@@ -24,6 +28,10 @@ class question(models.Model):
     question_time = models.TimeField(auto_now_add=True)
     def __str__(self):
         return self.question_title
+    
+    class Meta:
+        verbose_name = "Вопрос"
+        verbose_name_plural = "Вопросы"
 
 class answer(models.Model):
     id_question = models.ForeignKey(question, on_delete=models.CASCADE)
@@ -33,6 +41,10 @@ class answer(models.Model):
     answer_time = models.TimeField(auto_now_add=True)
     def __str__(self):
         return self.answer_body
+    
+    class Meta:
+        verbose_name = "Ответ"
+        verbose_name_plural = "Ответы"
 
 class commentAnswer(models.Model):
     id_answer = models.ForeignKey(answer, on_delete=models.CASCADE)
@@ -43,10 +55,22 @@ class commentAnswer(models.Model):
     def __str__(self):
         return self.comment_body
     
+    class Meta:
+        verbose_name = "Комментарий"
+        verbose_name_plural = "Комментарии"
+    
 class likesAnswer(models.Model):
     id_user = models.ForeignKey(profileAccount, on_delete=models.CASCADE)
     id_answer = models.ForeignKey(answer, on_delete=models.CASCADE)
 
+    class Meta:
+        verbose_name = "Лайк на ответ"
+        verbose_name_plural = "Лайки на ответ"
+
 class likesComment(models.Model):
     id_user = models.ForeignKey(profileAccount, on_delete=models.CASCADE)
     id_comment = models.ForeignKey(commentAnswer, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = "Лайк на комментарий"
+        verbose_name_plural = "Лайки на комментарии"

@@ -50,6 +50,16 @@ class questionViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = questionSerializer(filtredQuestions, many=True)
         return Response(serializer.data)
     
+    @action(methods=['post', 'get'], detail=True)
+    def changeQuestion(self, request, pk=None):
+        question = self.get_object()
+        serializer = self.get_serializer(question, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
+    
     filter_backends = [DjangoFilterBackend]
     filter_fields = ['question_body']
 
