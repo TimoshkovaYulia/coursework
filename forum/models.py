@@ -1,8 +1,11 @@
 from django.db import models
+from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
 
+alphanumeric = RegexValidator(r'^[0-9a-zA-Zа-яА-Я ]*$', 'В имени не должно содержаться специальных символов,допустимы только буквы и цифры')
 
 class profileAccount(models.Model):
-    user_name = models.CharField(max_length= 50)
+    user_name = models.CharField(max_length= 50, validators=[alphanumeric])
     login = models.CharField(max_length= 320)
     password = models.CharField(max_length= 256)
     email = models.EmailField(max_length= 320)
@@ -18,6 +21,10 @@ class category(models.Model):
     category_name = models.CharField(max_length= 256)
     def __str__(self):
         return self.category_name
+    
+    class Meta:
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
 
 class question(models.Model):
     id_category = models.ForeignKey(category, on_delete=models.CASCADE)
@@ -26,12 +33,18 @@ class question(models.Model):
     question_body = models.CharField(max_length= 1000)
     question_date = models.DateField(auto_now_add=True)
     question_time = models.TimeField(auto_now_add=True)
+    
     def __str__(self):
         return self.question_title
     
     class Meta:
         verbose_name = "Вопрос"
         verbose_name_plural = "Вопросы"
+    
+    def clean(self):
+        if not len(self.question_body) > 15:
+            raise ValidationError({'question_body': "Вопрос должен содержать не менее 15 символов"})
+
 
 class answer(models.Model):
     id_question = models.ForeignKey(question, on_delete=models.CASCADE)
@@ -45,6 +58,11 @@ class answer(models.Model):
     class Meta:
         verbose_name = "Ответ"
         verbose_name_plural = "Ответы"
+
+    def clean(self):
+        bad_word = 'плохое слово'
+        if bad_word in self.answer_body:
+            raise ValidationError({'answer_body': "Нельзя некультурно выражаться"})
 
 class commentAnswer(models.Model):
     id_answer = models.ForeignKey(answer, on_delete=models.CASCADE)

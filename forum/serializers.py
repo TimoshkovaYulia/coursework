@@ -27,7 +27,7 @@ class questionSerializer(serializers.ModelSerializer):
 class answerSerializer(serializers.ModelSerializer):
     class Meta:
         model = answer
-        fields = ('answer_body','id_user_answer', 'id_question', 'answer_date', 'answer_time')
+        fields = ('id', 'answer_body','id_user_answer', 'id_question', 'answer_date', 'answer_time')
 
 class commentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -37,7 +37,7 @@ class commentSerializer(serializers.ModelSerializer):
 class likesAnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = likesAnswer
-        fields = ('id_user','id_answer')
+        fields = ('id_user')
 
 class likesCommentSerializer(serializers.ModelSerializer):
     class Meta:

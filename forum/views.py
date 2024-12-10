@@ -6,11 +6,14 @@ from .models import category
 from .models import question
 from .models import answer
 from .models import commentAnswer
+from .models import likesAnswer
+from .models import likesComment
 from .serializers import profileSerializer
 from .serializers import categorySerializer
 from .serializers import questionSerializer
 from .serializers import answerSerializer
 from .serializers import commentSerializer
+
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
@@ -59,6 +62,7 @@ class questionViewSet(viewsets.ReadOnlyModelViewSet):
             return Response(serializer.data)
         else:
             return Response(serializer.errors)
+        
     
     filter_backends = [DjangoFilterBackend]
     filter_fields = ['question_body']
@@ -88,6 +92,13 @@ class answerApiUpdate(generics.UpdateAPIView):
 class answerViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = answer.objects.all()
     serializer_class = answerSerializer
+
+    @action(methods=['post', 'get'], detail=True)
+    def likeAnswer(self, request, pk=None):
+        answer = self.get_object()
+        user = self.get_serializer(likesAnswer, data=request.data, partial=True)
+        likesAnswer.objects.create(id_user=user, id_answer=answer)
+        return Response({'detail': 'Спасибо за лайк!'})
 
 class commentViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = commentAnswer.objects.all()
