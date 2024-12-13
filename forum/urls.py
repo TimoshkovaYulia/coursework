@@ -8,18 +8,21 @@ from forum.views import answerApiUpdate
 from forum.views import questionDelete
 from forum.views import questionCreate
 from forum.views import answerViewSet
-from forum.views import commentViewSet
+from forum.views import commentViewSet, likesAnswers
 
 from . import views
 
 
 
 router = DefaultRouter()
-router.register(r'profiles', profileViewSet, basename='profileAccount')
+router.register(r'profiles', profileViewSet, basename='Profile')
 router.register(r'categories', categoryViewSet, basename='category')
 router.register(r'question', questionViewSet, basename='question')
 router.register(r'answers', answerViewSet, basename='answer')
 router.register(r'comments', commentViewSet, basename='commentAnswer')
+router.register(r'likesAnswer', likesAnswers, basename='likesAnswer')
+
+
 
 urlpatterns = [
     path('answerUpdate/<int:pk>', answerApiUpdate.as_view()),

@@ -1,38 +1,45 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework import generics, viewsets
-from .models import profileAccount
+from .models import Profile
 from .models import category
 from .models import question
 from .models import answer
 from .models import commentAnswer
 from .models import likesAnswer
 from .models import likesComment
+
 from .serializers import profileSerializer
 from .serializers import categorySerializer
 from .serializers import questionSerializer
 from .serializers import answerSerializer
-from .serializers import commentSerializer
+from .serializers import commentSerializer, likesAnswerSerializer
 
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter
 from rest_framework.pagination import PageNumberPagination
-
+from .filter import questionFilter
+from .filter import answerFilter, likesAnswerFilter
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
+from rest_framework import status
+
+
 
 class profileViewSet(viewsets.ModelViewSet):
-    queryset = profileAccount.objects.all()
+    queryset = Profile.objects.all()
     serializer_class = profileSerializer
 
     @action(methods=['get'], detail=False)
     def profile_filter(self,request):
         filterAccount = (
-            ~Q(email__contains='mail') &
-            (Q(user_name__contains='Иванов') | Q(user_name__contains='Валерия'))
+            Q(user__email__contains='gmail') &
+            (~Q(user__username='admin') | Q(user__first_name='Сергей'))
         )
 
-        filtredProfiles = profileAccount.objects.filter(filterAccount)
+        filtredProfiles = Profile.objects.filter(filterAccount)
         serializer = profileSerializer(filtredProfiles, many=True)
         return Response(serializer.data)
     
@@ -41,12 +48,16 @@ class profileViewSet(viewsets.ModelViewSet):
 class questionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = question.objects.all()
     serializer_class = questionSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['question_title','question_body']
+    filterset_class = questionFilter
+    
 
     @action(methods=['get'], detail=False)
     def question_filter(self,request):
         filterQuestion = (
-            ~Q(id_user='1') &
-            (Q(id_category='1') | Q(id_category='4'))
+            ~Q(user='1') &
+            (Q(category='1') | Q(category='4'))
         )
 
         filtredQuestions = question.objects.filter(filterQuestion)
@@ -62,10 +73,6 @@ class questionViewSet(viewsets.ReadOnlyModelViewSet):
             return Response(serializer.data)
         else:
             return Response(serializer.errors)
-        
-    
-    filter_backends = [DjangoFilterBackend]
-    filter_fields = ['question_body']
 
 class questionDelete(generics.RetrieveDestroyAPIView):
     queryset = question.objects.all()
@@ -85,24 +92,42 @@ class categoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = categorySerializer
     pagination_class = categoryViewSetPagination
 
+
 class answerApiUpdate(generics.UpdateAPIView):
     queryset = answer.objects.all()
     serializer_class = answerSerializer
+
 
 class answerViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = answer.objects.all()
     serializer_class = answerSerializer
 
-    @action(methods=['post', 'get'], detail=True)
-    def likeAnswer(self, request, pk=None):
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['answer_body',]
+    filterset_class = answerFilter
+
+    @action(methods=['get'], detail=True)
+    def like(self, request, pk=None):
+        user = None
+        if request and hasattr(request, "user"):
+            user = request.user
+        profile = get_object_or_404(Profile, user=user)
         answer = self.get_object()
-        user = self.get_serializer(likesAnswer, data=request.data, partial=True)
-        likesAnswer.objects.create(id_user=user, id_answer=answer)
-        return Response({'detail': 'Спасибо за лайк!'})
+        likesAnswer.objects.get_or_create(user=profile, answer=answer)
+        return Response(status=status.HTTP_201_CREATED)
 
 class commentViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = commentAnswer.objects.all()
     serializer_class = commentSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['comment_body']
+
+
+class likesAnswers(viewsets.ReadOnlyModelViewSet):
+    queryset = likesAnswer.objects.all()
+    serializer_class = likesAnswerSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = likesAnswerFilter
 
 def index(request):
     return render(request, 'forum/index.html', {})
