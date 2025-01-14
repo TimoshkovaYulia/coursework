@@ -3,7 +3,6 @@ from simple_history.admin import SimpleHistoryAdmin
 from .models import question, category, answer, commentAnswer, likesAnswer, likesComment, Profile
 from import_export.admin import ExportActionModelAdmin
 from import_export import resources
-from googletrans import Translator
 
 @admin.register(Profile)
 class profileAdmin(admin.ModelAdmin):
@@ -40,9 +39,9 @@ class questionResource(resources.ModelResource):
 class questionAdmin(ExportActionModelAdmin, SimpleHistoryAdmin):
     resource_class = questionResource
     list_filter = ["category", "question_date"]
-    list_display = ['user', 'category', 'question_title','question_date']
+    list_display = ['user', 'category', 'question_title', 'question_date','question_time']
     search_fields = ('question_title','question_date')
-    fields = ['user', 'category', 'question_title']
+    fields = ['user', 'category', 'question_title', 'question_body']
 
     def get_export_queryset(self, request):
         queryset = super().get_queryset(request)
@@ -70,7 +69,8 @@ class answerAdmin(ExportActionModelAdmin, SimpleHistoryAdmin):
     resource_class = answerResource
     list_display = ['user_answer', 'question__question_title', 'answer_body', 'answer_date']
     list_filter = ["user_answer", "answer_date"]
-
+    
+   
 
 
 

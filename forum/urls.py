@@ -30,5 +30,7 @@ urlpatterns = [
     path('questionDelete/<int:pk>', questionDelete.as_view()),
     path('', include(router.urls)),
     path("", views.index, name="index"),
+    path("test/<int:answer_id>", views.answer_detail, name="detail"),
+    path("lastQuestion", views.last_question, name="detail"),
 
 ]

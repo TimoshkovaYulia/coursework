@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from rest_framework import generics, viewsets
 from .models import Profile
@@ -60,7 +60,7 @@ class questionViewSet(viewsets.ReadOnlyModelViewSet):
             (Q(category='1') | Q(category='4'))
         )
 
-        filtredQuestions = question.objects.filter(filterQuestion)
+        filtredQuestions = question.objects.filter(filterQuestion).exclude(user='2')
         serializer = questionSerializer(filtredQuestions, many=True)
         return Response(serializer.data)
     
@@ -95,11 +95,12 @@ class categoryViewSet(viewsets.ReadOnlyModelViewSet):
 
 class answerApiUpdate(generics.UpdateAPIView):
     queryset = answer.objects.all()
+    
     serializer_class = answerSerializer
 
 
 class answerViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = answer.objects.all()
+    queryset = answer.objects.order_by('-answer_date')
     serializer_class = answerSerializer
 
     filter_backends = [DjangoFilterBackend, SearchFilter]
@@ -132,3 +133,13 @@ class likesAnswers(viewsets.ReadOnlyModelViewSet):
 def index(request):
     return render(request, 'forum/index.html', {})
     
+def answer_detail(request, answer_id):
+    answerdet = get_object_or_404(answer, pk=answer_id)
+    context = {
+        'answerdet': answerdet,
+    }
+    return render(request, 'forum/answer_detail.html', context)
+
+def last_question(request):
+    lastQuestion = list(question.objects.all())
+    return render(request, 'forum/last_question.html', {'lastQuestion': lastQuestion})
