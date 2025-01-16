@@ -32,7 +32,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 
-
+from drf_yasg.utils import swagger_auto_schema
 
 class profileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
@@ -51,34 +51,61 @@ class profileViewSet(viewsets.ModelViewSet):
     
     
 
+# class questionViewSet(viewsets.ReadOnlyModelViewSet):
+    # queryset = question.objects.all()
+    # serializer_class = questionSerializer
+    # filter_backends = [DjangoFilterBackend, SearchFilter]
+    # search_fields = ['question_title','question_body']
+    # filterset_class = questionFilter
+
+    # @action(methods=['get'], detail=False)
+    # def question_filter(self,request):
+    #     filterQuestion = (
+    #         ~Q(user='1') &
+    #         (Q(category='1') | Q(category='4'))
+    #     )
+
+    #     filtredQuestions = question.objects.filter(filterQuestion).exclude(user='2')
+    #     serializer = questionSerializer(filtredQuestions, many=True)
+    #     return Response(serializer.data)
+    
+    # @action(methods=['post', 'get'], detail=True)
+    # def changeQuestion(self, request, pk=None):
+    #     question = self.get_object()
+    #     serializer = self.get_serializer(question, data=request.data, partial=True)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     else:
+    #         return Response(serializer.errors)
+
+from drf_yasg.utils import swagger_auto_schema
+
 class questionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = question.objects.all()
     serializer_class = questionSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter]
     search_fields = ['question_title','question_body']
     filterset_class = questionFilter
-    
+    """
+    API endpoint для работы с вопросами
+    """
+    @swagger_auto_schema(
+        operation_description="Получить список всех вопросов",
+        responses={200: questionSerializer(many=True)}
+    )
+    def list(self, request):
+        return super().list(request)
 
-    @action(methods=['get'], detail=False)
-    def question_filter(self,request):
-        filterQuestion = (
-            ~Q(user='1') &
-            (Q(category='1') | Q(category='4'))
-        )
-
-        filtredQuestions = question.objects.filter(filterQuestion).exclude(user='2')
-        serializer = questionSerializer(filtredQuestions, many=True)
-        return Response(serializer.data)
-    
-    @action(methods=['post', 'get'], detail=True)
-    def changeQuestion(self, request, pk=None):
-        question = self.get_object()
-        serializer = self.get_serializer(question, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors)
+    @swagger_auto_schema(
+        operation_description="Получить детальную информацию о вопросе",
+        responses={
+            200: questionSerializer,
+            404: "Вопрос не найден"
+        }
+    )
+    def retrieve(self, request, pk=None):
+        return super().retrieve(request, pk)
 
 class questionDelete(generics.RetrieveDestroyAPIView):
     queryset = question.objects.all()
@@ -162,7 +189,7 @@ def succesCreateQuestion(request):
     return render(request, 'forum/succesCreateQuestion.html', {})
 
 def all_questions(request):
-    questions = question.objects.select_related('category').all()[2:10]
+    questions = question.objects.select_related('category').all()
     return render(request, 'forum/all_questions.html', {'questions': questions})
 
 def user_questions(request):
@@ -214,7 +241,7 @@ def update_question(request, question_id):
         form = updateQuestionForm(request.POST, instance=question_update)
         if form.is_valid():
             question.objects.filter(pk=question_id).update(**form.cleaned_data)
-            return redirect('/api/manage_question')
+            return redirect('manage_question', question_id=question_id)
     else:
         form = updateQuestionForm(instance=question_update)
     
@@ -227,22 +254,27 @@ def delete_question(question_id):
     except question.objects.get(id=question_id).DoesNotExist:
         return False, "Вопрос не найден."
 
-def manage_question(request):
-    form = questionSelectionForm()
+def manage_question(request, question_id):
+    question_obj = get_object_or_404(question, id=question_id)
+    
+    # Проверяем, является ли пользователь автором вопроса
+    is_author = request.user == question_obj.user
+    
     if request.method == 'POST':
-        form = questionSelectionForm(request.POST)
-        if form.is_valid():
-            question_id = int(form.cleaned_data["selected_question"])
-            action = form.cleaned_data["action"]
-            if action == "update":
-                return redirect('update_question', question_id=question_id)
-            elif action == "delete":
-                result, message = delete_question(question_id)
-                if result:
-                    return HttpResponseRedirect('/api/manage_question/')
-                else:
-                    form.add_error(None, message)
-    return render(request, 'forum/manage_question.html', {'form': form})
+                   
+        action = request.POST.get('action')
+        
+        if action == 'delete':
+            question_obj.delete()
+            return redirect('main_page')
+            
+        elif action == 'edit':
+            return redirect('update_question', question_id=question_id)
+    
+    return render(request, 'forum/question_detail.html', {
+        'question': question_obj,
+        'is_author': is_author,
+    })
 
 
 def create_question_view(request):
@@ -256,8 +288,8 @@ def create_question_view(request):
     return render(request, 'forum/create_question.html', {'form': form})
 
 def main_page(request):
-    categories = category.objects.values('category_name')
-    lastQuestions = question.objects.prefetch_related('user').order_by("-id")[0:5]
+    categories = category.objects.all()
+    lastQuestions = question.objects.prefetch_related('user')[0:5]
     search_query = request.GET.get('search', '')
     search_results = None
     if search_query:

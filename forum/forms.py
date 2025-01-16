@@ -36,6 +36,7 @@ class updateQuestionForm(forms.ModelForm):
             'question_body': Textarea(attrs={'class': 'form-control', 'rows': 5}),
         }
 
+
 class QuestionCreateForm(forms.ModelForm):
     class Meta:
         model = question

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 """
 import os
 from pathlib import Path
+from celery.schedules import crontab
 from import_export.formats.base_formats import XLSX
 EXPORT_FORMATS = [XLSX]
 
@@ -27,12 +28,17 @@ SECRET_KEY = 'django-insecure-_ag-#gljaa&mpm0735b44#4yla*rlcadxw*$j(cb84n=)q@eur
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# Добавьте в ALLOWED_HOSTS следующие значения:
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'localhost']
+
+# Убедитесь, что DEBUG включен для разработки
+DEBUG = True
 
 
 # Application definition
 
 INSTALLED_APPS = [
+
     'googletrans',
     "forum.apps.ForumConfig",
     'django.contrib.admin',
@@ -45,7 +51,31 @@ INSTALLED_APPS = [
     'django_filters',
     'simple_history',
     'import_export',
+    'drf_yasg',
+    'django_celery_beat',
+    'django_celery_results',
+    'django_redis',
 ]
+
+DATABASES = {
+
+    'default': {
+
+        'ENGINE': 'django.db.backends.postgresql',
+
+        'NAME': 'forum_db',
+
+        'USER': 'postgres',
+
+        'PASSWORD': 'postgres',
+
+        'HOST': 'db',
+
+        'PORT': 5432,
+
+    }
+
+} 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -123,7 +153,13 @@ USE_I18N = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/dev/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/dev/ref/settings/#default-auto-field
@@ -141,3 +177,45 @@ REST_FRAMEWORK = {
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
+REDIS_PORT = os.getenv('REDIS_PORT', 6379)
+REDIS_DB = os.getenv('REDIS_DB', '1')
+REDIS_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}'
+
+CELERY_BROKER_URL = REDIS_URL
+CELERY_RESULT_BACKEND = REDIS_URL
+
+CELERY_ACCEPT_CONTENT = ['application/json']  
+CELERY_TASK_SERIALIZER = 'json'  
+CELERY_RESULT_SERIALIZER = 'json'  
+CELERY_TIMEZONE = "Europe/Moscow"
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mailhog'
+EMAIL_HOST_PASSWORD = ''
+EMAIL_PORT = 1025
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = False
+DEFAULT_FROM_EMAIL = 'webmaster@localhost'
+
+CELERY_BEAT_SCHEDULE = {
+    'send-every-minute': {
+        'task': 'forum.tasks.send_email_every_minute',
+        'schedule': crontab(),  # Каждую минуту
+    },
+    'new_year_announcement': {
+        'task': 'forum.tasks.send_email_new_year',
+        'schedule': crontab(hour=0, minute=0, day_of_month='1', month_of_year='1'),
+    },
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': REDIS_URL,
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}

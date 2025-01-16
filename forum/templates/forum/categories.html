@@ -7,7 +7,7 @@
 <body>
     {% for category in categories %}
         <h1>Категория: {{ category.category_name }}</h1>
-        <img src="{{ category.category_image.jpg }}" alt="{{ category.category_name }}" style="width:300px;height:auto;">
+        <img src="{{ category.category_image }}" alt="{{ category.category_name }}" style="width:300px;height:auto;">
     {% endfor %}
 </body>
 </html>

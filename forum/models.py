@@ -154,12 +154,3 @@ class likesAnswer(models.Model):
     class Meta:
         verbose_name = "Лайк на ответ"
         verbose_name_plural = "Лайки на ответ"
-
-# class likesComment(models.Model):
-#     user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='comment_likes')
-#     comment = models.ForeignKey(commentAnswer, on_delete=models.CASCADE, related_name='likes')
-#     history = HistoricalRecords()
-
-#     class Meta:
-#         verbose_name = "Лайк на комментарий"
-#         verbose_name_plural = "Лайки на комментарии"

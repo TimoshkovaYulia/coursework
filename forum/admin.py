@@ -60,24 +60,50 @@ class questionAdmin(ExportActionModelAdmin, SimpleHistoryAdmin):
         queryset = super().get_queryset(request)
         return queryset.filter(category__id = 1)
 
-pdfmetrics.registerFont(TTFont('LTSuperior-Regular', 'C:/Users/utimo/Desktop/институт лиф/5 семестр/web/djangoproject/venv/Lib/site-packages/reportlab/fonts/LTSuperior-Regular.ttf'))
-def generate_pdf(modeladmin, request, queryset):
-    buffer = io.BytesIO()
-    p = canvas.Canvas(buffer)
+# pdfmetrics.registerFont(TTFont('LTSuperior-Regular', 'C:/Users/utimo/Desktop/институт лиф/5 семестр/web/djangoproject/venv/Lib/site-packages/reportlab/fonts/LTSuperior-Regular.ttf'))
+# def generate_pdf(modeladmin, request, queryset):
+#     buffer = io.BytesIO()
+#     p = canvas.Canvas(buffer, pagesize=letter)
+
+#     width, height = letter  # Ширина и высота листа формата Letter
+#     margin = inch * 1       # Отступ от края страницы
+
+#     def draw_text(text, x, y, font_size=12, max_width=None):
+#         if not max_width:
+#             max_width = width - 2 * margin
+        
+#         text_lines = p.beginText(x, y)
+#         text_lines.setFont('LTSuperior-Regular', font_size)
+#         words = text.split(' ')
+#         line = ''
+        
+#         for word in words:
+#             new_line = f'{line} {word}'.strip()  # Убираем лишние пробелы
+            
+#             if p.stringWidth(new_line, 'LTSuperior-Regular', font_size) > max_width:
+#                 text_lines.textLine(line)
+#                 line = word
+#             else:
+#                 line = new_line
+                
+#         text_lines.textLine(line)  # Вывод последней строки
+#         p.drawText(text_lines)
+
+#     for obj in queryset:
+#         p.setFont('LTSuperior-Regular', 12)
+#         p.translate(margin, height - margin)
+        
+#         draw_text(f'Пользователь: {obj.user_answer}', 0, 0)
+#         draw_text(f'Вопрос: {obj.question.question_body}', 0, -25)  # Увеличим смещение до -25
+#         draw_text(f'Ответ: {obj.answer_body}', 0, -55)   
+        
+#         p.showPage()
     
-    p.setFont('LTSuperior-Regular', 12)
-    p.translate(inch, 9*inch)
-    
-    for obj in queryset:
-        p.drawString(0, 0, f'user: {obj.user_answer}')
-        p.drawString(0, -10, f'Вопрос: {obj.question.question_body}')
-        p.drawString(0, -20, f'Ответ: {obj.answer_body}')
-        p.showPage()
-    
-    p.save()
-    buffer.seek(0)
-    return HttpResponse(buffer, content_type='application/pdf')
-generate_pdf.short_description = "Создать PDF файл"
+#     p.save()
+#     buffer.seek(0)
+#     return HttpResponse(buffer, content_type='application/pdf')
+
+# generate_pdf.short_description = "Создать PDF файл"
 
 
 class answerResource(resources.ModelResource):
@@ -100,7 +126,7 @@ class answerAdmin(ExportActionModelAdmin, SimpleHistoryAdmin):
     resource_class = answerResource
     list_display = ['user_answer', 'question__question_title', 'answer_body', 'source_url']
     list_filter = ["user_answer", "answer_date"]
-    actions = [generate_pdf]
+    # actions = [generate_pdf]
     date_hierarchy = 'answer_date'
 
 

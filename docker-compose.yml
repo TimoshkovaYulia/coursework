@@ -1,0 +1,61 @@
+services:
+  web:
+    &WEB
+    container_name: djangocoursework_dev_web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DJANGO_SETTINGS_MODULE=djangocoursework.settings
+      - DATABASE_HOST=host.docker.internal
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+    volumes:
+      - ./:/app
+    ports:
+      - 8000:8000
+
+  redis:
+    image: redis:latest
+    container_name: djangocoursework_dev_redis
+    environment:
+      - DJANGO_SETTINGS_MODULE=djangocoursework.settings
+    ports:
+      - "6379:6379"
+
+  celery:
+    build: .
+    command: celery -A djangocoursework worker -l info
+    depends_on:
+      - redis
+    environment:
+      - DJANGO_SETTINGS_MODULE=djangocoursework.settings
+      - RUNNING_IN_DOCKER=True
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+    volumes:
+      - ./:/app
+
+  celery-beat:
+    build: .
+    command: celery -A djangocoursework beat -l info
+    depends_on:
+      - redis
+      - web
+    environment:
+      - DJANGO_SETTINGS_MODULE=djangocoursework.settings
+      - RUNNING_IN_DOCKER=True
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+    volumes:
+      - ./:/app
+
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    ports:
+      - "1025:1025"
+      - "8025:8025"

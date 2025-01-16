@@ -9,7 +9,10 @@
     {% for question in questions %}
         <strong>Категория:</strong> {{ question.category }}
         <br />
-        <strong>Вопрос:</strong> {{ question }}
+        <strong>Вопрос:</strong> {{ question.question_title}}
+        <p>{{  question.question_body }}</p>
+        <embed src="{{  question.document }}">
+
         <br /><br />
     {% endfor %}
 </body>
