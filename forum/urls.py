@@ -10,6 +10,7 @@ from forum.views import questionCreate
 from forum.views import answerViewSet
 from forum.views import commentViewSet, likesAnswers
 
+
 from . import views
 
 
@@ -29,8 +30,9 @@ urlpatterns = [
     path('questionCreate/', questionCreate.as_view()),
     path('questionDelete/<int:pk>', questionDelete.as_view()),
     path('', include(router.urls)),
-    path("", views.index, name="index"),
+    path("createQuestion", views.index, name="index"),
     path("test/<int:answer_id>", views.answer_detail, name="detail"),
-    path("lastQuestion", views.last_question, name="detail"),
+    path("lastQuestion", views.last_question, name="lastQuestion"),
+    path("forum/succesCreateQuestion", views.succesCreateQuestion, name="succes"),
 
 ]

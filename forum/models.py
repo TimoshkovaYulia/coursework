@@ -6,6 +6,7 @@ from simple_history.models import HistoricalRecords
 from django.utils.text import Truncator
 from django.utils import timezone
 from django.urls import reverse
+from django.forms import ModelForm
 
 alphanumeric = RegexValidator(r'^[0-9a-zA-Zа-яА-Я ?:]*$', 'В названии вопроса специальных символов,допустимы только буквы и цифры')
 
@@ -52,17 +53,17 @@ class category(models.Model):
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
 
-CATEGORY_CHOICES = ( 
-    ("Спорт", "Спорт"), 
-    ("Красота и здоровье", "Красота и здоровье"), 
-    ("Образование", "Образование"), 
-    ("Компьютерные игры", "Компьютерные игры"), 
-    ("Семья, дом", "Семья, дом"), 
-    ("Другое", "Другое"), 
-) 
+# CATEGORY_CHOICES = ( 
+#     ("1", "Спорт"), 
+#     ("2", "Красота и здоровье"), 
+#     ("3", "Образование"), 
+#     ("4", "Компьютерные игры"), 
+#     ("5", "Семья, дом"), 
+#     ("6", "Другое"), 
+# ) choices = CATEGORY_CHOICES,default = 'Sport', 
 
 class question(models.Model):
-    category = models.ForeignKey(category, on_delete=models.CASCADE, choices = CATEGORY_CHOICES, default = 'Sport', related_name='questions', verbose_name = "Категория вопроса")
+    category = models.ForeignKey(category, on_delete=models.CASCADE, related_name='questions', verbose_name = "Категория вопроса")
     user = models.ForeignKey(Profile, on_delete=models.CASCADE, verbose_name = "Пользователь")
     question_title = models.CharField(max_length= 100, verbose_name = "Название вопроса", validators=[alphanumeric])
     question_body = models.CharField(max_length= 1000, verbose_name = "Содержание вопроса")
@@ -79,6 +80,7 @@ class question(models.Model):
         ordering = ['question_date']
     
     def clean(self):
+        super().clean()
         if not len(self.question_body) > 15:
             raise ValidationError({'question_body': "Вопрос должен содержать не менее 15 символов"})
         
@@ -130,6 +132,8 @@ class commentAnswer(models.Model):
     class Meta:
         verbose_name = "Комментарий"
         verbose_name_plural = "Комментарии"
+
+
     
 class likesAnswer(models.Model):
     user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='answer_likes')

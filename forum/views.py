@@ -15,6 +15,10 @@ from .serializers import questionSerializer
 from .serializers import answerSerializer
 from .serializers import commentSerializer, likesAnswerSerializer
 
+from .forms import questionForm
+
+from django.shortcuts import redirect
+
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
@@ -95,7 +99,6 @@ class categoryViewSet(viewsets.ReadOnlyModelViewSet):
 
 class answerApiUpdate(generics.UpdateAPIView):
     queryset = answer.objects.all()
-    
     serializer_class = answerSerializer
 
 
@@ -131,7 +134,15 @@ class likesAnswers(viewsets.ReadOnlyModelViewSet):
     filterset_class = likesAnswerFilter
 
 def index(request):
-    return render(request, 'forum/index.html', {})
+    form = questionForm()
+
+    if request.method == 'POST':
+        form = questionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('forum/succesCreateQuestion')
+    context = {'form': form}
+    return render(request, 'forum/index.html', context)
     
 def answer_detail(request, answer_id):
     answerdet = get_object_or_404(answer, pk=answer_id)
@@ -143,3 +154,6 @@ def answer_detail(request, answer_id):
 def last_question(request):
     lastQuestion = list(question.objects.all())
     return render(request, 'forum/last_question.html', {'lastQuestion': lastQuestion})
+
+def succesCreateQuestion(request):
+    return render(request, 'forum/succesCreateQuestion.html', {})

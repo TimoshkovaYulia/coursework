@@ -25,7 +25,7 @@ class categorySerializer(serializers.ModelSerializer):
     questions_count = serializers.IntegerField(read_only=True,)
     class Meta:
         model = category
-        fields = ('category_name','questions_count')
+        fields = ('id', 'category_name','questions_count')
 
 
 class answerSerializer(serializers.ModelSerializer):
