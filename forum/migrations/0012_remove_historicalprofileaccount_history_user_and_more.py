@@ -7,28 +7,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('forum', '0011_alter_answer_answer_body_alter_answer_question_and_more'),
+        ("forum", "0011_alter_answer_answer_body_alter_answer_question_and_more"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='historicalprofileaccount',
-            name='history_user',
+            model_name="historicalprofileaccount",
+            name="history_user",
         ),
         migrations.DeleteModel(
-            name='profileAccount',
+            name="profileAccount",
         ),
         migrations.AlterField(
-            model_name='historicalquestion',
-            name='question_time',
+            model_name="historicalquestion",
+            name="question_time",
             field=models.TimeField(default=django.utils.timezone.now),
         ),
         migrations.AlterField(
-            model_name='question',
-            name='question_time',
+            model_name="question",
+            name="question_time",
             field=models.TimeField(default=django.utils.timezone.now),
         ),
         migrations.DeleteModel(
-            name='HistoricalprofileAccount',
+            name="HistoricalprofileAccount",
         ),
     ]

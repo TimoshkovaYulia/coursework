@@ -7,32 +7,71 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('forum', '0002_alter_answer_answer_body_and_more'),
+        ("forum", "0002_alter_answer_answer_body_and_more"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='answer',
-            name='answer_liked_by',
+            model_name="answer",
+            name="answer_liked_by",
         ),
         migrations.RemoveField(
-            model_name='commentanswer',
-            name='comment_liked_by',
+            model_name="commentanswer",
+            name="comment_liked_by",
         ),
         migrations.CreateModel(
-            name='likesAnswer',
+            name="likesAnswer",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('id_answer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='forum.answer')),
-                ('id_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='forum.profileaccount')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "id_answer",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="forum.answer"
+                    ),
+                ),
+                (
+                    "id_user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="forum.profileaccount",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='likesComment',
+            name="likesComment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('id_comment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='forum.commentanswer')),
-                ('id_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='forum.profileaccount')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "id_comment",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="forum.commentanswer",
+                    ),
+                ),
+                (
+                    "id_user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="forum.profileaccount",
+                    ),
+                ),
             ],
         ),
     ]

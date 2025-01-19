@@ -7,28 +7,44 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('forum', '0006_alter_profile_options_and_more'),
+        ("forum", "0006_alter_profile_options_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='likesanswer',
-            name='answer',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='likes', to='forum.answer'),
+            model_name="likesanswer",
+            name="answer",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="likes",
+                to="forum.answer",
+            ),
         ),
         migrations.AlterField(
-            model_name='likesanswer',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='answer_likes', to='forum.profile'),
+            model_name="likesanswer",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="answer_likes",
+                to="forum.profile",
+            ),
         ),
         migrations.AlterField(
-            model_name='likescomment',
-            name='comment',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='likes', to='forum.commentanswer'),
+            model_name="likescomment",
+            name="comment",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="likes",
+                to="forum.commentanswer",
+            ),
         ),
         migrations.AlterField(
-            model_name='likescomment',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comment_likes', to='forum.profile'),
+            model_name="likescomment",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="comment_likes",
+                to="forum.profile",
+            ),
         ),
     ]

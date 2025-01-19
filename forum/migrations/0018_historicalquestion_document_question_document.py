@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('forum', '0017_category_category_image_and_more'),
+        ("forum", "0017_category_category_image_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='historicalquestion',
-            name='document',
+            model_name="historicalquestion",
+            name="document",
             field=models.TextField(blank=True, max_length=100, null=True),
         ),
         migrations.AddField(
-            model_name='question',
-            name='document',
-            field=models.FileField(blank=True, null=True, upload_to='documents/'),
+            model_name="question",
+            name="document",
+            field=models.FileField(blank=True, null=True, upload_to="documents/"),
         ),
     ]

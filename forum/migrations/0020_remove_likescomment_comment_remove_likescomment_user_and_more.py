@@ -6,27 +6,29 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('forum', '0019_answer_source_url_historicalanswer_source_url'),
+        ("forum", "0019_answer_source_url_historicalanswer_source_url"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='likescomment',
-            name='comment',
+            model_name="likescomment",
+            name="comment",
         ),
         migrations.RemoveField(
-            model_name='likescomment',
-            name='user',
+            model_name="likescomment",
+            name="user",
         ),
         migrations.AddField(
-            model_name='commentanswer',
-            name='likes',
-            field=models.ManyToManyField(blank=True, related_name='liked_comments', to='forum.profile'),
+            model_name="commentanswer",
+            name="likes",
+            field=models.ManyToManyField(
+                blank=True, related_name="liked_comments", to="forum.profile"
+            ),
         ),
         migrations.DeleteModel(
-            name='HistoricallikesComment',
+            name="HistoricallikesComment",
         ),
         migrations.DeleteModel(
-            name='likesComment',
+            name="likesComment",
         ),
     ]

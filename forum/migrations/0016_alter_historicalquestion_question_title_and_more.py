@@ -7,18 +7,38 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('forum', '0015_alter_historicalquestion_category_and_more'),
+        ("forum", "0015_alter_historicalquestion_category_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='historicalquestion',
-            name='question_title',
-            field=models.CharField(default='', max_length=100, validators=[django.core.validators.RegexValidator('^[0-9a-zA-Zа-яА-Я ?:]*$', 'В названии вопроса специальных символов,допустимы только буквы и цифры')], verbose_name='Название вопроса'),
+            model_name="historicalquestion",
+            name="question_title",
+            field=models.CharField(
+                default="",
+                max_length=100,
+                validators=[
+                    django.core.validators.RegexValidator(
+                        "^[0-9a-zA-Zа-яА-Я ?:]*$",
+                        "В названии вопроса специальных символов,допустимы только буквы и цифры",
+                    )
+                ],
+                verbose_name="Название вопроса",
+            ),
         ),
         migrations.AlterField(
-            model_name='question',
-            name='question_title',
-            field=models.CharField(default='', max_length=100, validators=[django.core.validators.RegexValidator('^[0-9a-zA-Zа-яА-Я ?:]*$', 'В названии вопроса специальных символов,допустимы только буквы и цифры')], verbose_name='Название вопроса'),
+            model_name="question",
+            name="question_title",
+            field=models.CharField(
+                default="",
+                max_length=100,
+                validators=[
+                    django.core.validators.RegexValidator(
+                        "^[0-9a-zA-Zа-яА-Я ?:]*$",
+                        "В названии вопроса специальных символов,допустимы только буквы и цифры",
+                    )
+                ],
+                verbose_name="Название вопроса",
+            ),
         ),
     ]

@@ -8,73 +8,145 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='answer',
+            name="answer",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('answer_body', models.CharField(max_length=256)),
-                ('answer_date', models.DateField(auto_now_add=True)),
-                ('answer_time', models.TimeField(auto_now_add=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("answer_body", models.CharField(max_length=256)),
+                ("answer_date", models.DateField(auto_now_add=True)),
+                ("answer_time", models.TimeField(auto_now_add=True)),
             ],
         ),
         migrations.CreateModel(
-            name='category',
+            name="category",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('category_name', models.CharField(max_length=256)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("category_name", models.CharField(max_length=256)),
             ],
         ),
         migrations.CreateModel(
-            name='profileAccount',
+            name="profileAccount",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('user_name', models.CharField(max_length=50)),
-                ('login', models.CharField(max_length=320)),
-                ('password', models.CharField(max_length=256)),
-                ('email', models.EmailField(max_length=320)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("user_name", models.CharField(max_length=50)),
+                ("login", models.CharField(max_length=320)),
+                ("password", models.CharField(max_length=256)),
+                ("email", models.EmailField(max_length=320)),
             ],
         ),
         migrations.CreateModel(
-            name='commentAnswer',
+            name="commentAnswer",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('comment_body', models.CharField(max_length=256)),
-                ('comment_date', models.DateField(auto_now_add=True)),
-                ('comment_time', models.TimeField(auto_now_add=True)),
-                ('id_answer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='forum.answer')),
-                ('comment_liked_by', models.ManyToManyField(related_name='liked_comments', to='forum.profileaccount')),
-                ('id_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='forum.profileaccount')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("comment_body", models.CharField(max_length=256)),
+                ("comment_date", models.DateField(auto_now_add=True)),
+                ("comment_time", models.TimeField(auto_now_add=True)),
+                (
+                    "id_answer",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="forum.answer"
+                    ),
+                ),
+                (
+                    "comment_liked_by",
+                    models.ManyToManyField(
+                        related_name="liked_comments", to="forum.profileaccount"
+                    ),
+                ),
+                (
+                    "id_user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="forum.profileaccount",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='answer',
-            name='answer_liked_by',
-            field=models.ManyToManyField(related_name='liked_answers', to='forum.profileaccount'),
+            model_name="answer",
+            name="answer_liked_by",
+            field=models.ManyToManyField(
+                related_name="liked_answers", to="forum.profileaccount"
+            ),
         ),
         migrations.AddField(
-            model_name='answer',
-            name='id_user_answer',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='forum.profileaccount'),
+            model_name="answer",
+            name="id_user_answer",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="forum.profileaccount"
+            ),
         ),
         migrations.CreateModel(
-            name='question',
+            name="question",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('question_title', models.CharField(max_length=100)),
-                ('question_body', models.CharField(max_length=256)),
-                ('question_date', models.DateField(auto_now_add=True)),
-                ('question_time', models.TimeField(auto_now_add=True)),
-                ('id_category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='forum.category')),
-                ('id_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='forum.profileaccount')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("question_title", models.CharField(max_length=100)),
+                ("question_body", models.CharField(max_length=256)),
+                ("question_date", models.DateField(auto_now_add=True)),
+                ("question_time", models.TimeField(auto_now_add=True)),
+                (
+                    "id_category",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="forum.category"
+                    ),
+                ),
+                (
+                    "id_user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="forum.profileaccount",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='answer',
-            name='id_question',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='forum.question'),
+            model_name="answer",
+            name="id_question",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="forum.question"
+            ),
         ),
     ]

@@ -6,23 +6,25 @@ from .models import question, likesAnswer
 class CharFilterInFilter(filters.BaseInFilter, filters.CharFilter):
     pass
 
-class questionFilter(filters.FilterSet):
 
+class QuestionFilter(filters.FilterSet):
+    ''' фильтр вопросов '''
     class Meta:
         model = question
-        fields = ['category', 'user']
+        fields = ["category", "user"]
 
-class answerFilter(filters.FilterSet):
-    answer_date = filters.DateFilter(label='Дата публикации')
+
+class AnswerFilter(filters.FilterSet):
+    ''' фильтр ответов '''
+    answer_date = filters.DateFilter(label="Дата публикации")
 
     class Meta:
         model = answer
-        fields = ['answer_date', 'question']
+        fields = ["answer_date", "question"]
 
-class likesAnswerFilter(filters.FilterSet):
 
+class LikesAnswerFilter(filters.FilterSet):
+    ''' фильтр лайков на ответ '''
     class Meta:
         model = likesAnswer
-        fields = ['user']
-
-
+        fields = ["user"]

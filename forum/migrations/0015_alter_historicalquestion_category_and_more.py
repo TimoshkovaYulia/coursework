@@ -7,23 +7,41 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('forum', '0014_alter_question_options_and_more'),
+        ("forum", "0014_alter_question_options_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='historicalquestion',
-            name='category',
-            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='forum.category', verbose_name='Категория вопроса'),
+            model_name="historicalquestion",
+            name="category",
+            field=models.ForeignKey(
+                blank=True,
+                db_constraint=False,
+                null=True,
+                on_delete=django.db.models.deletion.DO_NOTHING,
+                related_name="+",
+                to="forum.category",
+                verbose_name="Категория вопроса",
+            ),
         ),
         migrations.AlterField(
-            model_name='question',
-            name='category',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='questions', to='forum.category', verbose_name='Категория вопроса'),
+            model_name="question",
+            name="category",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="questions",
+                to="forum.category",
+                verbose_name="Категория вопроса",
+            ),
         ),
         migrations.AlterField(
-            model_name='question',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='questions_by', to='forum.profile', verbose_name='Пользователь'),
+            model_name="question",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="questions_by",
+                to="forum.profile",
+                verbose_name="Пользователь",
+            ),
         ),
     ]

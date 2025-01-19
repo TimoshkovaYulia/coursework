@@ -7,28 +7,57 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('forum', '0016_alter_historicalquestion_question_title_and_more'),
+        ("forum", "0016_alter_historicalquestion_question_title_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='category',
-            name='category_image',
-            field=models.ImageField(blank=True, null=True, upload_to='categories/', verbose_name='Фото категории'),
+            model_name="category",
+            name="category_image",
+            field=models.ImageField(
+                blank=True,
+                null=True,
+                upload_to="categories/",
+                verbose_name="Фото категории",
+            ),
         ),
         migrations.AddField(
-            model_name='historicalcategory',
-            name='category_image',
-            field=models.TextField(blank=True, max_length=100, null=True, verbose_name='Фото категории'),
+            model_name="historicalcategory",
+            name="category_image",
+            field=models.TextField(
+                blank=True, max_length=100, null=True, verbose_name="Фото категории"
+            ),
         ),
         migrations.AlterField(
-            model_name='historicalquestion',
-            name='question_title',
-            field=models.CharField(blank=True, default='', max_length=100, validators=[django.core.validators.RegexValidator('^[0-9a-zA-Zа-яА-Я ?:]*$', 'В названии вопроса специальных символов,допустимы только буквы и цифры')], verbose_name='Название вопроса'),
+            model_name="historicalquestion",
+            name="question_title",
+            field=models.CharField(
+                blank=True,
+                default="",
+                max_length=100,
+                validators=[
+                    django.core.validators.RegexValidator(
+                        "^[0-9a-zA-Zа-яА-Я ?:]*$",
+                        "В названии вопроса специальных символов,допустимы только буквы и цифры",
+                    )
+                ],
+                verbose_name="Название вопроса",
+            ),
         ),
         migrations.AlterField(
-            model_name='question',
-            name='question_title',
-            field=models.CharField(blank=True, default='', max_length=100, validators=[django.core.validators.RegexValidator('^[0-9a-zA-Zа-яА-Я ?:]*$', 'В названии вопроса специальных символов,допустимы только буквы и цифры')], verbose_name='Название вопроса'),
+            model_name="question",
+            name="question_title",
+            field=models.CharField(
+                blank=True,
+                default="",
+                max_length=100,
+                validators=[
+                    django.core.validators.RegexValidator(
+                        "^[0-9a-zA-Zа-яА-Я ?:]*$",
+                        "В названии вопроса специальных символов,допустимы только буквы и цифры",
+                    )
+                ],
+                verbose_name="Название вопроса",
+            ),
         ),
     ]

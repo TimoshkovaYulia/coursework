@@ -7,13 +7,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('forum', '0008_alter_answer_question'),
+        ("forum", "0008_alter_answer_question"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='question',
-            name='category',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='questions', to='forum.category'),
+            model_name="question",
+            name="category",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="questions",
+                to="forum.category",
+            ),
         ),
     ]

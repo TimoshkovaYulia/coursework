@@ -1,26 +1,21 @@
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
-from .models import question, category, answer, commentAnswer, likesAnswer, Profile
 from import_export.admin import ExportActionModelAdmin
 from import_export import resources
 
-import io
-from django.http import HttpResponse
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfbase import pdfmetrics
-from reportlab.lib.units import inch
-from reportlab.pdfbase.ttfonts import TTFont
+from .models import question, category, answer, commentAnswer, likesAnswer, Profile
 
 @admin.register(Profile)
-class profileAdmin(admin.ModelAdmin):
-    list_display = ['user', 'user__email']
+class ProfileAdmin(admin.ModelAdmin):
+    '''ffr'''
+    list_display = ["user", "user__email"]
 
-class categoryResource(resources.ModelResource):
-    
+
+class CategoryResource(resources.ModelResource):
+    ''' категории админ '''
     class Meta:
         model = category
-        fields = ('category_name',)
+        fields = ("category_name",)
 
     def get_category(self, obj):
         return f"Категория: {obj.category_name}"
@@ -30,133 +25,111 @@ class categoryResource(resources.ModelResource):
 
 
 @admin.register(category)
-class categoryAdmin(ExportActionModelAdmin, SimpleHistoryAdmin):
-    list_display = ['category_name', 'questions_count', 'category_image']
-    resource_class = categoryResource
+class CategoryAdmin(ExportActionModelAdmin, SimpleHistoryAdmin):
+    ''' категории '''
+    list_display = ["category_name", "questions_count", "category_image"]
+    resource_class = CategoryResource
 
 
-class questionResource(resources.ModelResource):
+class QuestionResource(resources.ModelResource):
+    '''  '''
     class Meta:
         model = question
-        fields = ('user', 'category', 'question_title','question_date')
-        
-class questionInline(admin.TabularInline):
+        fields = ("user", "category", "question_title", "question_date")
+
+
+class QuestionInline(admin.TabularInline):
+    '''  '''
     model = answer
-    raw_id_fields = ['question']
+    raw_id_fields = ["question"]
+
 
 @admin.register(question)
-class questionAdmin(ExportActionModelAdmin, SimpleHistoryAdmin):
-    resource_class = questionResource
+class QuestionAdmin(ExportActionModelAdmin, SimpleHistoryAdmin):
+    ''' c '''
+    resource_class = QuestionResource
     list_filter = ["category", "question_date"]
-    list_display = ['user', 'category', 'question_title', 'question_date','question_time', 'document']
-    search_fields = ('question_title','question_date')
-    fields = ['user', 'category', 'question_title', 'question_body','question_date', 'question_time', 'document']
-    readonly_fields = ('question_date', 'question_time')
-    inlines = [questionInline]
-    list_display_links = ['category', 'question_title']
-
+    list_display = [
+        "user",
+        "category",
+        "question_title",
+        "question_date",
+        "question_time",
+        "document",
+    ]
+    search_fields = ("question_title", "question_date")
+    fields = [
+        "user",
+        "category",
+        "question_title",
+        "question_body",
+        "question_date",
+        "question_time",
+        "document",
+    ]
+    readonly_fields = ("question_date", "question_time")
+    inlines = [QuestionInline]
+    list_display_links = ["category", "question_title"]
 
     def get_export_queryset(self, request):
         queryset = super().get_queryset(request)
-        return queryset.filter(category__id = 1)
+        return queryset.filter(category__id=1)
 
-# pdfmetrics.registerFont(TTFont('LTSuperior-Regular', 'C:/Users/utimo/Desktop/институт лиф/5 семестр/web/djangoproject/venv/Lib/site-packages/reportlab/fonts/LTSuperior-Regular.ttf'))
-# def generate_pdf(modeladmin, request, queryset):
-#     buffer = io.BytesIO()
-#     p = canvas.Canvas(buffer, pagesize=letter)
-
-#     width, height = letter  # Ширина и высота листа формата Letter
-#     margin = inch * 1       # Отступ от края страницы
-
-#     def draw_text(text, x, y, font_size=12, max_width=None):
-#         if not max_width:
-#             max_width = width - 2 * margin
-        
-#         text_lines = p.beginText(x, y)
-#         text_lines.setFont('LTSuperior-Regular', font_size)
-#         words = text.split(' ')
-#         line = ''
-        
-#         for word in words:
-#             new_line = f'{line} {word}'.strip()  # Убираем лишние пробелы
-            
-#             if p.stringWidth(new_line, 'LTSuperior-Regular', font_size) > max_width:
-#                 text_lines.textLine(line)
-#                 line = word
-#             else:
-#                 line = new_line
-                
-#         text_lines.textLine(line)  # Вывод последней строки
-#         p.drawText(text_lines)
-
-#     for obj in queryset:
-#         p.setFont('LTSuperior-Regular', 12)
-#         p.translate(margin, height - margin)
-        
-#         draw_text(f'Пользователь: {obj.user_answer}', 0, 0)
-#         draw_text(f'Вопрос: {obj.question.question_body}', 0, -25)  # Увеличим смещение до -25
-#         draw_text(f'Ответ: {obj.answer_body}', 0, -55)   
-        
-#         p.showPage()
-    
-#     p.save()
-#     buffer.seek(0)
-#     return HttpResponse(buffer, content_type='application/pdf')
-
-# generate_pdf.short_description = "Создать PDF файл"
-
-
-class answerResource(resources.ModelResource):
-    def dehydrate_answer_body(self, answer:'answer'):
+class AnswerResource(resources.ModelResource):
+    ''' s '''
+    def dehydrate_answer_body(self, answer: "answer"):
         return answer.answer_body.upper()
-    
-    def dehydrate_user_answer(self, answer:'answer'):
+
+    def dehydrate_user_answer(self, answer: "answer"):
         return answer.user_answer.user.username
-    def dehydrate_question(self, answer:'answer'):
+
+    def dehydrate_question(self, answer: "answer"):
         return answer.question.question_body
-    
+
     class Meta:
         model = answer
-        fields = ('user_answer', 'answer_body','question', 'source_url')
-
+        fields = ("user_answer", "answer_body", "question", "source_url")
 
 
 @admin.register(answer)
-class answerAdmin(ExportActionModelAdmin, SimpleHistoryAdmin):
-    resource_class = answerResource
-    list_display = ['user_answer', 'question__question_title', 'answer_body', 'source_url']
+class AnswerAdmin(ExportActionModelAdmin, SimpleHistoryAdmin):
+    ''' s '''
+    resource_class = AnswerResource
+    list_display = [
+        "user_answer",
+        "question__question_title",
+        "answer_body",
+        "source_url",
+    ]
     list_filter = ["user_answer", "answer_date"]
     # actions = [generate_pdf]
-    date_hierarchy = 'answer_date'
+    date_hierarchy = "answer_date"
 
 
 @admin.register(commentAnswer)
-class commentAdmin(SimpleHistoryAdmin):
-    list_display = ['user', 'comment_body', 'like_count']
-    filter_horizontal = ('likes',)
+class CommentAdmin(SimpleHistoryAdmin):
+    ''' s '''
+    list_display = ["user", "comment_body", "like_count"]
+    filter_horizontal = ("likes",)
 
-    @admin.display(description='Количество лайков')
+    @admin.display(description="Количество лайков")
     def like_count(self, obj):
         return obj.likes.count()
 
 
-class likesAnswerResource(resources.ModelResource):
-
-    def get_user(self, LikesAnswer: 'likesAnswer'):
+class LikesAnswerResource(resources.ModelResource):
+    ''' d '''
+    def get_user(self, LikesAnswer: "likesAnswer"):
         return f"Пользователь: {LikesAnswer.user.username}"
-    
+
     class Meta:
         model = likesAnswer
-        fields = ('user', 'answer')
+        fields = ("user", "answer")
 
 
 @admin.register(likesAnswer)
+class LikesAnswerAdmin(ExportActionModelAdmin, admin.ModelAdmin):
+    ''' s '''
+    resource_class = LikesAnswerResource
+    list_display = ["user", "answer"]
 
-class likesAnswerAdmin(ExportActionModelAdmin, admin.ModelAdmin):
-    resource_class = likesAnswerResource
-    list_display = ['user', 'answer']
-
-
-# @admin.register(likesComment)
-# class likesCommentAdmin(admin.ModelAdmin):
-#     list_display = ['user', 'comment']

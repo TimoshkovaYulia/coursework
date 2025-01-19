@@ -6,12 +6,16 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('forum', '0012_remove_historicalprofileaccount_history_user_and_more'),
+        ("forum", "0012_remove_historicalprofileaccount_history_user_and_more"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='question',
-            options={'ordering': ['-question_date'], 'verbose_name': 'Вопрос', 'verbose_name_plural': 'Вопросы'},
+            name="question",
+            options={
+                "ordering": ["-question_date"],
+                "verbose_name": "Вопрос",
+                "verbose_name_plural": "Вопросы",
+            },
         ),
     ]
