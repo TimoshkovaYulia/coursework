@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Все вопросы</title>
+</head>
+<body>
+    <p>Список всех вопросов со второго по десятый:</p>
+    {% for question in questions %}
+        <strong>Категория:</strong> {{ question.category }}
+        <br />
+        <strong>Вопрос:</strong> {{ question }}
+        <br /><br />
+    {% endfor %}
+</body>
+</html>

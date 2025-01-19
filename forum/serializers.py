@@ -4,7 +4,6 @@ from .models import Profile
 from .models import category
 from .models import answer
 from .models import commentAnswer
-from .models import likesComment
 from .models import likesAnswer
 
 
@@ -52,8 +51,8 @@ class likesAnswerSerializer(serializers.ModelSerializer):
         model = likesAnswer
         fields = ('user','answer')
 
-class likesCommentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = likesComment
-        fields = ('user','comment')
+# class likesCommentSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = likesComment
+#         fields = ('user','comment')
 

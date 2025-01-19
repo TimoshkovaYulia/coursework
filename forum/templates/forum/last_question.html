@@ -6,6 +6,11 @@
 </head>
 <body>
     <p>Самый первый вопрос: {{ lastQuestion | first }}</p>
-    <p>Последние три вопроса: {{ lastQuestion.question_body | slice:":3" }}</p>
+    <p>Последние три вопроса:</p>
+    <ul>
+        {% for question in lastQuestion|slice:":3" %}
+            <li>Вопрос: {{ question.question_body }}</li>
+        {% endfor %}
+    </ul>
 </body>
 </html>

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
-from .models import question, category, answer, commentAnswer, likesAnswer, likesComment, Profile
+from .models import question, category, answer, commentAnswer, likesAnswer, Profile
 from import_export.admin import ExportActionModelAdmin
 from import_export import resources
 
@@ -31,7 +31,7 @@ class categoryResource(resources.ModelResource):
 
 @admin.register(category)
 class categoryAdmin(ExportActionModelAdmin, SimpleHistoryAdmin):
-    list_display = ['category_name', 'questions_count']
+    list_display = ['category_name', 'questions_count', 'category_image']
     resource_class = categoryResource
 
 
@@ -48,9 +48,9 @@ class questionInline(admin.TabularInline):
 class questionAdmin(ExportActionModelAdmin, SimpleHistoryAdmin):
     resource_class = questionResource
     list_filter = ["category", "question_date"]
-    list_display = ['user', 'category', 'question_title', 'question_date','question_time']
+    list_display = ['user', 'category', 'question_title', 'question_date','question_time', 'document']
     search_fields = ('question_title','question_date')
-    fields = ['user', 'category', 'question_title', 'question_body','question_date', 'question_time']
+    fields = ['user', 'category', 'question_title', 'question_body','question_date', 'question_time', 'document']
     readonly_fields = ('question_date', 'question_time')
     inlines = [questionInline]
     list_display_links = ['category', 'question_title']
@@ -91,14 +91,14 @@ class answerResource(resources.ModelResource):
     
     class Meta:
         model = answer
-        fields = ('user_answer', 'answer_body','question')
+        fields = ('user_answer', 'answer_body','question', 'source_url')
 
 
 
 @admin.register(answer)
 class answerAdmin(ExportActionModelAdmin, SimpleHistoryAdmin):
     resource_class = answerResource
-    list_display = ['user_answer', 'question__question_title', 'answer_body']
+    list_display = ['user_answer', 'question__question_title', 'answer_body', 'source_url']
     list_filter = ["user_answer", "answer_date"]
     actions = [generate_pdf]
     date_hierarchy = 'answer_date'
@@ -106,7 +106,12 @@ class answerAdmin(ExportActionModelAdmin, SimpleHistoryAdmin):
 
 @admin.register(commentAnswer)
 class commentAdmin(SimpleHistoryAdmin):
-    list_display = ['user', 'comment_body']
+    list_display = ['user', 'comment_body', 'like_count']
+    filter_horizontal = ('likes',)
+
+    @admin.display(description='Количество лайков')
+    def like_count(self, obj):
+        return obj.likes.count()
 
 
 class likesAnswerResource(resources.ModelResource):
@@ -126,6 +131,6 @@ class likesAnswerAdmin(ExportActionModelAdmin, admin.ModelAdmin):
     list_display = ['user', 'answer']
 
 
-@admin.register(likesComment)
-class likesCommentAdmin(admin.ModelAdmin):
-    list_display = ['user', 'comment']
+# @admin.register(likesComment)
+# class likesCommentAdmin(admin.ModelAdmin):
+#     list_display = ['user', 'comment']

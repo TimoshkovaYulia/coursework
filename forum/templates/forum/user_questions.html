@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Все вопросы пользователя</title>
+</head>
+<body>
+    <p>Всего вопросов на форуме: {{ count }}</p>
+    <p>Список всех вопросов каждого пользователя:</p>
+    <ul>    
+        {% for user in users %}
+            <li>Пользователь: {{ user.user.username }}
+                <ul>
+                    {% for question in user.questions_by.all %}
+                        <li>Вопрос: {{ question.question_body }}
+                            {% with answers_count=question.answers.count %}
+                                {% if question.answers.exists %}
+                                    (количество ответов: {{ answers_count }})
+                                {% else %}
+                                    (ответов нет)
+                                {% endif %}
+                            {% endwith %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

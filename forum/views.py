@@ -7,7 +7,8 @@ from .models import question
 from .models import answer
 from .models import commentAnswer
 from .models import likesAnswer
-from .models import likesComment
+
+from django.utils import timezone
 
 from .serializers import profileSerializer
 from .serializers import categorySerializer
@@ -15,9 +16,10 @@ from .serializers import questionSerializer
 from .serializers import answerSerializer
 from .serializers import commentSerializer, likesAnswerSerializer
 
-from .forms import questionForm
+from .forms import questionForm, questionSelectionForm, updateQuestionForm, QuestionCreateForm
 
 from django.shortcuts import redirect
+from django.http import HttpResponseRedirect
 
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -155,5 +157,119 @@ def last_question(request):
     lastQuestion = list(question.objects.all())
     return render(request, 'forum/last_question.html', {'lastQuestion': lastQuestion})
 
+
 def succesCreateQuestion(request):
     return render(request, 'forum/succesCreateQuestion.html', {})
+
+def all_questions(request):
+    questions = question.objects.select_related('category').all()[2:10]
+    return render(request, 'forum/all_questions.html', {'questions': questions})
+
+def user_questions(request):
+    users = Profile.objects.prefetch_related('questions_by').all()
+    count_questions_all = question.objects.count()
+    context = {
+        'users': users,
+        'count': count_questions_all
+    }
+    return render(request, 'forum/user_questions.html', context)
+
+def categories(request):
+    categories = category.objects.values('category_name', 'category_image')
+    return render(request, 'forum/categories.html', {'categories': categories})
+
+def filtered_questions(request):
+    current_year = timezone.now().year
+    questions = question.objects.filter(question_date__gt=timezone.datetime(current_year, 1, 1)).filter(user="1")
+    return render(request, "forum/filtered_questions.html", {"questions": questions})
+
+def question_contains_word(request):
+    question_contains_word = question.objects.filter(question_body__contains = 'Университет')
+    return render(request, "forum/question_contains_word.html", {"questions": question_contains_word})
+
+def question_icontains_word(request):
+    question_icontains_word = question.objects.filter(question_body__icontains = 'велосипед')
+    return render(request, "forum/question_icontains_word.html", {"questions": question_icontains_word})
+
+def questions_with_answers_count(request):
+    questions = question.objects.all()
+    questions_with_counts = []
+    for q in questions:
+        has_answers = q.answers.exists()
+        answers_count = q.answers.count()
+        questions_with_counts.append({
+            'question': q,
+            'has_answers': has_answers,
+            'answers_count': answers_count
+        })
+    context = {
+        'questions_with_counts': questions_with_counts
+    }
+    return render(request, 'your_template.html', context)
+
+def update_question(request, question_id):
+    question_update = question.objects.get(id=question_id)
+    
+    if request.method == 'POST':
+        form = updateQuestionForm(request.POST, instance=question_update)
+        if form.is_valid():
+            question.objects.filter(pk=question_id).update(**form.cleaned_data)
+            return redirect('/api/manage_question')
+    else:
+        form = updateQuestionForm(instance=question_update)
+    
+    return render(request, 'forum/update_question.html', {'form': form})
+
+def delete_question(question_id):
+    try:
+        question.objects.get(id=question_id).delete()
+        return True, "Вопрос успешно удалён."
+    except question.objects.get(id=question_id).DoesNotExist:
+        return False, "Вопрос не найден."
+
+def manage_question(request):
+    form = questionSelectionForm()
+    if request.method == 'POST':
+        form = questionSelectionForm(request.POST)
+        if form.is_valid():
+            question_id = int(form.cleaned_data["selected_question"])
+            action = form.cleaned_data["action"]
+            if action == "update":
+                return redirect('update_question', question_id=question_id)
+            elif action == "delete":
+                result, message = delete_question(question_id)
+                if result:
+                    return HttpResponseRedirect('/api/manage_question/')
+                else:
+                    form.add_error(None, message)
+    return render(request, 'forum/manage_question.html', {'form': form})
+
+
+def create_question_view(request):
+    if request.method == 'POST':
+        form = QuestionCreateForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('forum/succesCreateQuestion')
+    else:
+        form = QuestionCreateForm()
+    return render(request, 'forum/create_question.html', {'form': form})
+
+def main_page(request):
+    categories = category.objects.values('category_name')
+    lastQuestions = question.objects.prefetch_related('user').order_by("-id")[0:5]
+    search_query = request.GET.get('search', '')
+    search_results = None
+    if search_query:
+        search_results = question.objects.filter(
+            Q(question_title__icontains=search_query) |
+            Q(question_body__icontains=search_query)
+        ).order_by("-id")
+
+    return render(request, 'forum/main_page.html', {
+        'categories': categories,
+        'lastQuestions': lastQuestions,
+        'search_query': search_query,
+        'search_results': search_results,
+        'search_query': search_query,
+    })

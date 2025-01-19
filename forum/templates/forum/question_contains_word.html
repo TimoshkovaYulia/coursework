@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Просмотр категории</title>
+</head>
+<body>
+    <h1>Вопросы, содержащие слово "Университет": </h1>
+    {% for question in questions %}
+        <li>{{ question.question_body }}</li>
+    {% endfor %}
+</body>
+</html>

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Просмотр категории</title>
+</head>
+<body>
+    <h1>Отфильтрованные вопросы после 1 января 2025 года от пользователя admin: </h1>
+    {% for question in questions %}
+        <li>{{ question }}</li>
+    {% endfor %}
+</body>
+</html>
